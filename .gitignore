@@ -1,0 +1,30 @@
+# Ignore node_modules in all subdirectories (standard for JS/TS projects)
+**/node_modules/
+
+# Ignore build output directories (Vite, Vue CLI, etc.)
+**/dist/
+**/build/
+
+# Ignore Vite cache directory
+**/.vite/
+
+# Ignore TypeScript build info files
+**/*.tsbuildinfo
+
+# Ignore IDE/editor-specific folders
+**/.idea/
+**/.vscode/
+**/*.code-workspace
+**/.suo
+**/.ntvs*
+**/.njsproj
+**/.sln
+**/.sw?
+
+# Ignore OS-generated files
+**/.DS_Store
+**/Thumbs.db
+
+# Ignore environment variable files
+**/.env
+**/.env.*.local
