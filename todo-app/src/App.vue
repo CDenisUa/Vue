@@ -1,5 +1,5 @@
 <script lang="ts">
-import {defineComponent, ref} from 'vue';
+import {defineComponent, ref, onMounted, watch} from 'vue';
 
 interface Task {
   text: string;
@@ -8,8 +8,25 @@ interface Task {
 
 export default defineComponent({
   setup() {
+    const STORAGE_KEY = 'vue-todo-list';
+
     const newTask = ref<string>('')
     const tasks = ref<Task[]>([])
+
+    onMounted(() => {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) {
+        try {
+          tasks.value = JSON.parse(saved)
+        } catch (e) {
+          console.error('Failed to parse tasks from localStorage', e)
+        }
+      }
+    })
+
+    watch(tasks, (newVal) => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newVal))
+    }, { deep: true })
 
     const addTask = () => {
       if (newTask.value.trim() === '') return
@@ -40,8 +57,10 @@ export default defineComponent({
   <div class="container">
     <h1>Todo list</h1>
 
-    <input v-model="newTask" @keyup.enter="addTask" placeholder="Add task"/>
-    <button @click="addTask">Add task</button>
+    <div class="input-container">
+      <input v-model="newTask" @keyup.enter="addTask" placeholder="Add task"/>
+      <button @click="addTask">Add task</button>
+    </div>
 
     <ul>
       <li v-for="(task, index) in tasks" :key="index">
@@ -60,6 +79,11 @@ export default defineComponent({
   margin: auto;
   padding: 20px;
   font-family: sans-serif;
+}
+
+.input-container {
+  display: grid;
+  grid-template-columns: 250px 120px;
 }
 
 input {
