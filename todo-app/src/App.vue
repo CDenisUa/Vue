@@ -1,17 +1,19 @@
 <script lang="ts">
-import {defineComponent, ref, onMounted, watch} from 'vue';
+import {defineComponent, ref, onMounted, watch, computed} from 'vue';
 
 interface Task {
   text: string;
   done: boolean;
+
 }
 
 export default defineComponent({
   setup() {
     const STORAGE_KEY = 'vue-todo-list';
 
-    const newTask = ref<string>('')
-    const tasks = ref<Task[]>([])
+    const newTask = ref<string>('');
+    const tasks = ref<Task[]>([]);
+    const filter = ref<'all' | 'active' | 'completed'>('all');
 
     onMounted(() => {
       const saved = localStorage.getItem(STORAGE_KEY)
@@ -26,7 +28,7 @@ export default defineComponent({
 
     watch(tasks, (newVal) => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newVal))
-    }, { deep: true })
+    }, {deep: true})
 
     const addTask = () => {
       if (newTask.value.trim() === '') return
@@ -42,12 +44,23 @@ export default defineComponent({
       tasks.value[index].done = !tasks.value[index].done
     }
 
+    const filteredTasks = computed(() => {
+      if (filter.value === 'active') {
+        return tasks.value.filter(task => !task.done)
+      } else if (filter.value === 'completed') {
+        return tasks.value.filter(task => task.done)
+      }
+      return tasks.value
+    })
+
     return {
       newTask,
       tasks,
       addTask,
       removeTask,
-      toggleTask
+      toggleTask,
+      filter,
+      filteredTasks
     }
   }
 })
@@ -62,8 +75,14 @@ export default defineComponent({
       <button @click="addTask">Add task</button>
     </div>
 
+    <div class="filters">
+      <button @click="filter = 'all'">All</button>
+      <button @click="filter = 'active'">Active</button>
+      <button @click="filter = 'completed'">Completed</button>
+    </div>
+
     <ul>
-      <li v-for="(task, index) in tasks" :key="index">
+      <li v-for="(task, index) in filteredTasks" :key="index">
       <span :class="{done: task.done}" @click="toggleTask(index)">
         {{ task.text }}
       </span>
@@ -74,41 +93,52 @@ export default defineComponent({
 </template>
 
 <style>
-.container {
-  max-width: 500px;
-  margin: auto;
-  padding: 20px;
-  font-family: sans-serif;
-}
+  .container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    font-family: sans-serif;
+  }
 
-.input-container {
-  display: grid;
-  grid-template-columns: 250px 120px;
-}
+  .input-container {
+    display: grid;
+    grid-template-columns: 250px 120px;
+  }
 
-input {
-  width: 70%;
-  padding: 8px;
-  margin-right: 10px;
-}
+  input {
+    width: 70%;
+    padding: 8px;
+    margin-right: 10px;
+  }
 
-button {
-  padding: 8px 12px;
-}
+  button {
+    padding: 8px 12px;
+  }
 
-li {
-  list-style: none;
-  margin-top: 10px;
-}
+  li {
+    list-style: none;
+    margin-top: 10px;
+  }
 
-.done {
-  text-decoration: line-through;
-  color: gray;
-  cursor: pointer;
-}
+  .done {
+    text-decoration: line-through;
+    color: gray;
+    cursor: pointer;
+  }
 
-span {
-  cursor: pointer;
-  margin-right: 10px;
-}
+  span {
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  .filters {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+  }
+
+  .filters button {
+    padding: 6px 12px;
+    cursor: pointer;
+  }
 </style>
