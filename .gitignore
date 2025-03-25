@@ -13,6 +13,7 @@
 
 # Ignore IDE/editor-specific folders
 **/.idea/
+.idea/
 **/.vscode/
 **/*.code-workspace
 **/.suo
