@@ -82,6 +82,9 @@ export default defineComponent({
     </div>
 
     <ul class="list-container">
+      <li v-if="filteredTasks.length === 0">
+        <p>There are no tasks</p>
+      </li>
       <li v-for="(task, index) in filteredTasks" :key="index">
         <div class="task-container" @click="toggleTask(index)">
           <span :class="{done: task.done}" >
