@@ -81,12 +81,14 @@ export default defineComponent({
       <button @click="filter = 'completed'">Completed</button>
     </div>
 
-    <ul>
+    <ul class="list-container">
       <li v-for="(task, index) in filteredTasks" :key="index">
-      <span :class="{done: task.done}" @click="toggleTask(index)">
-        {{ task.text }}
-      </span>
-        <button @click='removeTask(index)'>x</button>
+        <div class="task-container" @click="toggleTask(index)">
+          <span :class="{done: task.done}" >
+            {{ task.text }}
+          </span>
+          <button @click='removeTask(index)'>x</button>
+        </div>
       </li>
     </ul>
   </div>
@@ -94,9 +96,8 @@ export default defineComponent({
 
 <style>
   .container {
+    height: 100vh;
     max-width: 500px;
-    margin: auto;
-    padding: 20px;
     font-family: sans-serif;
   }
 
@@ -140,5 +141,27 @@ export default defineComponent({
   .filters button {
     padding: 6px 12px;
     cursor: pointer;
+  }
+
+  .task-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  ul {
+    padding: 5px;
+    border: .5px solid gray;
+    border-radius: 5px;
+  }
+
+  li:hover {
+    cursor: pointer;
+  }
+
+  li:hover span   {
+    color: red;
   }
 </style>
